@@ -7,6 +7,7 @@ class Tracker:
     paths = []
     old = None
     tracking = False
+    cap = None
 
     def __init__(self, file_path=""):
         self.file_path = file_path
@@ -38,18 +39,22 @@ class Tracker:
 
         return output
 
-    def track(self, show=True, startCall=lambda fpms:None,loopCall=lambda frame:None, endCall=lambda:None, dfpms=None):
-        
+    def track(self, show=True, start_call=lambda fpms: None, loop_call=lambda frame: None, end_call=lambda: None,
+              dfpms=None):
+
         print(self.file_path)
         # Load video file
-        cap = cv2.VideoCapture(self.file_path)
+        self.cap = cap = cv2.VideoCapture(self.file_path)
 
         # Get frame rate
         fpms = cap.get(cv2.CAP_PROP_FPS) / 1000
-        if not dfpms: dfpms = (1//fpms)/1000
+        if not dfpms: dfpms = (1 // fpms) / 1000
+        start_call(fpms)
         cont = True
         while cap.isOpened():
             if not cont:
+                cont = loop_call(a)
+                time.sleep((1 // dfpms) / 1000)
                 continue
             a = self.next_frame(cap, show, int(1 // fpms))
             if show:
@@ -60,14 +65,15 @@ class Tracker:
                 elif ord("t") == a & 0xFF:
                     self.tracking = not self.tracking
             else:
-                cont = loopCall(a)
-                time.sleep((1//dfpms)/1000)
+                cont = loop_call(a)
+                time.sleep((1 // dfpms) / 1000)
         cap.release()
-        if show: cv2.destroyAllWindows()
-        endCall()
+        if show:
+            cv2.destroyAllWindows()
+        end_call()
 
-    def next_frame(self, cap, show=True, t=0):
-        ret, frame = cap.read()
+    def next_frame(self, show=True, t=0):
+        ret, frame = self.cap.read()
 
         if not ret:
             return
@@ -75,7 +81,7 @@ class Tracker:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         frame = cv2.resize(frame, (frame.shape[1] // 2, frame.shape[0] // 2))
-        
+
         if self.tracking: frame = self.generate_contours(frame)
 
         if show:
