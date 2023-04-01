@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="3">
+     <widget class="QPushButton" name="playButton">
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="7">
+     <widget class="QLabel" name="imageShow">
+      <property name="text">
+       <string>Water Maze Tracker</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QPushButton" name="trackingCorrectButton">
+      <property name="text">
+       <string>Correct Tracking</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5" colspan="2">
+     <widget class="QPushButton" name="pauseTrackingButton">
+      <property name="text">
+       <string>Pause Tracking</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2" colspan="3">
+     <widget class="QPushButton" name="startTrackingButton">
+      <property name="text">
+       <string>Start Tracking</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="previousButton">
+      <property name="text">
+       <string>Previous</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QPushButton" name="nextButton">
+      <property name="text">
+       <string>Next</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

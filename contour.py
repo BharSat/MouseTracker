@@ -1,9 +1,12 @@
 import cv2
+import time
 
 
 class Tracker:
-    contours = None
+    contours = []
+    paths = []
     old = None
+    tracking = False
 
     def __init__(self, file_path=""):
         self.file_path = file_path
@@ -26,7 +29,7 @@ class Tracker:
         output = nimage.copy()
 
         # Draw contours on output image
-        cv2.drawContours(output, self.contours, -1, (127, 127, 127), 2)
+        cv2.drawContours(output, self.contours, -1, (0, 0, 0), 2)
         for cnt in self.contours:
             (x, y), radius = cv2.minEnclosingCircle(cnt)
             center = (int(x), int(y))
@@ -35,26 +38,35 @@ class Tracker:
 
         return output
 
-    def track(self):
+    def track(self, show=True, startCall=lambda fpms:None,loopCall=lambda frame:None, endCall=lambda:None, dfpms=None):
+        
         print(self.file_path)
         # Load video file
         cap = cv2.VideoCapture(self.file_path)
 
         # Get frame rate
         fpms = cap.get(cv2.CAP_PROP_FPS) / 1000
+        if not dfpms: dfpms = (1//fpms)/1000
+        cont = True
         while cap.isOpened():
-            a = self.next_frame(cap, int(1 // fpms))
-            if a is None:
-                break
-            elif ord("q") == a & 0xFF:
-                break
-        self.next_frame(cap=cap)
+            if not cont:
+                continue
+            a = self.next_frame(cap, show, int(1 // fpms))
+            if show:
+                if a is None:
+                    break
+                elif ord("q") == a & 0xFF:
+                    break
+                elif ord("t") == a & 0xFF:
+                    self.tracking = not self.tracking
+            else:
+                cont = loopCall(a)
+                time.sleep((1//dfpms)/1000)
         cap.release()
-        cv2.destroyAllWindows()
+        if show: cv2.destroyAllWindows()
+        endCall()
 
-    def next_frame(self, cap, t=0):
-
-        old = None
+    def next_frame(self, cap, show=True, t=0):
         ret, frame = cap.read()
 
         if not ret:
@@ -63,13 +75,11 @@ class Tracker:
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         frame = cv2.resize(frame, (frame.shape[1] // 2, frame.shape[0] // 2))
+        
+        if self.tracking: frame = self.generate_contours(frame)
 
-        if old is not None:
-            nframe = cv2.absdiff(frame, old)
-        else:
-            nframe = frame
-        old = frame
+        if show:
+            cv2.imshow('Frame', frame)
 
-        cv2.imshow('Frame', self.generate_contours(nframe, frame))
-
-        return cv2.waitKey(t)
+            return cv2.waitKey(t)
+        return frame
